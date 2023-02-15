@@ -1,7 +1,258 @@
 <html>
 	<head>
+		<link rel="stylesheet" type="text/css" href="semantic/semantic.min.css">
+		<script
+				src="https://code.jquery.com/jquery-3.1.1.min.js"
+				integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+				crossorigin="anonymous"></script>
+		<script src="semantic/semantic.min.js"></script>
+		<title>Project 1 Write-up (xyuan195)</title>
 	</head>
 	<body>
-		Project 1 here
+		<div class="ui container">
+			<div class="ui center aligned container">
+				<br>
+				<h1>Project 1 Write-up</h1>
+				<h4>Author: Xiaoyuan Zhu (m195@berkeley.edu)</h4>
+				<h4><a href="https://github.com/cal-cs184-student/p1-rasterizer-sp23-xyuan195">Github Repo</a></h4>
+			</div>
+			
+			<h2>Overview</h2>
+			<p></p>
+			
+			<h2>Tasks Breakdown</h2>
+			<h3>Task 1: Drawing Single-Color Triangles</h3>
+			<h4>[Task 1] Walk Through on Implementation Details</h4>
+			<p>
+				In this task, I wrote the code to perform point-in-triangle tests using line equation test. The basic idea is if
+				a point is tested as inside the triangle, the code will rasterize it. Also, in order to make the code more
+				readable and maintainable, I created several smaller functions to perform different tasks. I'll talk about them
+				in details in the following paragraphs.
+			</p>
+			<p>
+				I first created a function <b>RasterizerImp::line_equation_test</b> in class RasterizerImp, which takes three
+				2-D coordinates (the first two coordinates form the line, and the third one is the target point to be tested),
+				and returns the line equation test result using the formula taught in the lecture
+				(<b>-(x - x0) * (y1 - y0) + (y - y0) * (x1 - x0)</b>).
+			</p>
+			<p>
+				I also created another function <b>RasterizerImp::is_on_the_line</b> to test if the absolute value of the line equation test
+				result is less than a predefined constant EPSILON_CONSTANT (0.001 in the code). If the absolute value is less
+				than EPSILON_CONSTANT, we will consider the point is on the line. We cannot compare against 0 directly due to
+				how the floating points are represented in the system.
+			</p>
+			<p>
+			  Another helper function is <b>RasterizerImp::is_same_side</b>. This function takes two line equation test results, and returns
+				true of both results have the same sign; returns false otherwise.
+			</p>
+			<div class="ui warning message">
+				<p>
+					The tricky part of this task is how to define which side of a line is inside the triangle. During my analysis,
+					I found out a pattern:
+				</p>
+				<p>
+					To start with, we can take the line formed by the first two vertexes of the triangle, and get the line test
+					result of the third vertex. Then the sign of this line test result can be used as the "target" sign for all points in the canvas.
+					When we evaluate each point against the edges of the triangle, we will do so in this particular order:
+					edge V1 -> V2, edge V2 -> V3, edge line V3 -> V1. If all 3 line test results of a point are with the same sign
+					as the "target" sign, we can consider this point is in the triangle.
+				</p>
+				<p>
+					This will make the code easier to implement and less error-prune.
+				</p>
+			</div>
+			<p>
+				Then, I created another function <b>RasterizerImp::is_point_in_triangle</b> to take 1) the coordinates of all 3 vertexes of the
+				triangle, 2) the coordinate of the target point, and 3) the target line test result of the third triangle vertex
+				as described above. In this function, we will perform at most 3 line tests for the target point. The function will
+				return early if 1) the point is on any triangle edge (returns true in this case), or 2) the line test result of
+				an edge has different sign with the target line test result (returns false in this case). If all 3 line test results
+				are true, we will return true to the caller (in this case, function <b>RasterizerImp::rasterize_triangle</b>).
+			</p>
+			<p>
+				Finally, I can use all above helper functions in <b>RasterizerImp::rasterize_triangle</b>. In this function, I
+				use a nested loop to loop through all points on the canvas to get the coordinates of the top-left corner of each pixel.
+				For each point, I then calculate the center of the pixel by adding 0.5 to both x and y coordinates. Then, I plug in
+				the coordinate of the center of each pixel to function <b>RasterizerImp::is_point_in_triangle</b>.
+				If the result is true, <b>RasterizerImp::fill_pixel</b> will be invoked to fill in the sample_buff, which is
+				essentially the same as rgb_framebuffer_target in task 1.
+			</p>
+			<h4>[Task 1] Analysis on Algorithm Efficiency</h4>
+			<p>
+				In my algorithm, for each point on the canvas, we will need to perform at most 3 line tests. So the worst-case
+				time complexity is O(width * height) * 3. Since the constant of O can be omitted when analyzing time complexity,
+				we can take the time complexity as O(width * height).
+			</p>
+			<p>
+				This time complexity is the same as the one which checks each sample within the bounding box of the triangle. The
+				latter needs to loop through every pixel and evaluate against the bounder in the worst case as well. So its time
+				complexity is the same as O(width * height).
+			</p>
+			<h4>[Task 1] Screenshot for Task 1 ("svg/basic/test4.svg")</h4>
+			<img src="./assets/task-1.png">
+			
+			<h3>Task 2: Antialiasing by Supersampling</h3>
+			<h4>[Task 2] Walk Through on Implementation Details</h4>
+			<p>
+				In this task, I wrote the code to perform antialiasing by supersampling. The high-level idea is that, instead of just
+				using the center of each pixel to perform point-in-triangle tests, we "supersample" each pixel by the sample rate,
+				and use these supersampled sub-pixels to perform point-in-triangle tests, and then we take the average of the result
+				of these "sub-pixels" as the result of the entire pixel. This will reduce jaggies in our rasterized image. But this
+				will also consume more computing resources. I'll describe my algorithms and implementation details below.
+			</p>
+			<p>
+				First of all, the sample_buffer vector is the data structure storing all supersampled point-in-triangle tests
+				results. Because we have different sample rates now, whenever we need to resize the frame buffer or change the
+				sample rate, we need to update the size of our sample_buffer using <b>width * height * sample_rate</b>. This is
+				reflected in two functions: <b>RasterizerImp::set_framebuffer_target</b> and <b>RasterizerImp::set_sample_rate</b>.
+			</p>
+			<p>
+				Secondly, in <b>RasterizerImp::rasterize_triangle</b>, we want to calculate the point-in-triangle test for each
+				supersampled "sub-pixel"s. To start with, I calculate how many iterations we need to perform for each edge of each
+				pixel. This is essentially just <b>sqrt(sample_rate)</b> (variable <b>iter_per_edge</b> in the code) since we
+				want to divide each pixel into "sample_rate" umber of "sub-pixel"s. Then I calculate the increment amount we
+				need to add to each sub-pixel's coordinate to get the center coordinate.
+			</p>
+			<p>
+				Next, I loop through all original pixels on the canvas, for each pixel, I loop through <b>iter_per_edge</b> on both
+				x-axis and y-axis to get the coordinates of each sub-pixel, then plug them in function <b>RasterizerImp::is_point_in_triangle</b>
+				(created in Task 1) to get the point-in-triangle test result, which is a Color object. At last, I put them in
+				the correctly sized　sample_buffer vector.
+			</p>
+			<p>
+				The last function I modified is <b>RasterizerImp::resolve_to_framebuffer</b>. In this function, I evaluate the <b>sample_buffer</b>
+				vector, and resolve the color (r, g, b values in frame buffer) of each original pixel and put them in rgb_framebuffer_target
+				array. The resolve logic is: for each original pixel, I instantiate a temporary Color object with value Black
+				({ 0, 0, 0 } as rgb values). For each sub-pixel of the original pixel, I add its color to the temporary Color
+				object. After the loop, I divide the r, g, b values of the temporary Color object by <b>sample_rate</b> to get the averaged
+				result, and use that to fill in the <b>rgb_framebuffer_target</b> array.
+			</p>
+			<h4>[Task 2] Screenshots for Task 2 ("svg/basic/test4.svg" under different sample rates)</h4>
+			<div class="ui three column grid">
+				<div class="row">
+					<div class="column ui segment">
+						<img src="./assets/task-2_sample_rate_1.png">
+						<h5 class="ui center aligned container">Sample Rate 1</h5>
+					</div>
+					<div class="column ui segment">
+						<img src="./assets/task-2_sample_rate_4.png">
+						<h5 class="ui center aligned container">Sample Rate 4</h5>
+					</div>
+					<div class="column ui segment">
+						<img src="./assets/task-2_sample_rate_16.png">
+						<h5 class="ui center aligned container">Sample Rate 16</h5>
+					</div>
+				</div>
+			</div>
+			<div class="ui info message">
+				<div class="header">[Task 2] Explanation on the Results</div>
+				<p>
+					We can see from the results: the higher the sample rate is, the fewer jaggies the image has, and the smoother
+					the object edge is. This is because we take the average value of many sub-pixels instead of just the center of
+					the pixel. The result is much more accurate, especially on edges.
+				</p>
+				<p>
+					Based on the result of this task, we can see supersampling is an effective way to deal with antialiasing.
+				</p>
+			</div>
+			<h3>Task 3: Transforms</h3>
+			<p></p>
+			
+			<h3>Task 4: Barycentric coordinates</h3>
+			<h4>[Task 4] Barycentric Coordinates Explanation</h4>
+			<h4>[Task 4] Screenshots ("svg/basic/test7.svg")</h4>
+			<img src="./assets/task-4.png">
+			<p></p>
+			
+			<h3>Task 5: "Pixel sampling" for texture mapping</h3>
+			<h4>[Task 5] Pixel Sampling Explanation and Implementation Details</h4>
+			<p>
+				Pixel sampling is a texture mapping method to sample the pixels on the texture image to apply the result to the
+				screen image. The goal of texture mapping is to make the images on screen more realistic without introducing
+				too much resource consuming computer graphics technics (imaging if we don't have texture mapping, we'd need to
+				draw these minor details on images to make them to look realistic).
+			</p>
+			<p>
+				The high-level idea of implementing pixel sampling is to translate screen pixel coordinates to texture pixel
+				coordinates by using the linear algebra view of barycentric coordinates, and then apply different sampling methods
+				to get the sample result in the texture. The translation formula is provided in the lecture notes: essentially,
+				we need three points on each of the screen space and texture space, and the 3 * 3 transform matrix can be calculated
+				as M_texture * M_screen ^ -1.
+			</p>
+			<p>
+				As for translating each pixel on the screen space to the texture space, I take the coordinate of the pixel on
+				the screen, and convert them into a 3-D vector { x, y, 1 }. Then I multiply it by the transform matrix to get
+				the barycentric coordinates in the texture space. Inside each sampling function in Texture, I convert the
+				barycentric coordinates to the real coordinates by multiplying x by (width - 1), and multiplying y by (height - 1).
+				This process can also apply supersampling to get granular coordinates to render better images.
+			</p>
+			<p>
+				I implemented two kinds of pixel sampling: nearest and bilinear. For nearest sampling, once we got the actual
+				coordinates on the texture, I just round x and y to the nearest integer and get the color; for bilinear sampling,
+				I take the floor and ceil of both x and y, and run linear interpolation 3 times: first two are on the horizontal
+				direction (x-axis) to get the color of two endpoints of the vertical line formed by the sample point, the last one
+				is on the vertical direction (y-axis) to get the final color of the sample point.
+			</p>
+			<h4>[Task 5] Screenshots with Different Sample Rates for Comparison</h4>
+			<div class="ui two column grid">
+				<div class="row bordered">
+					<div class="column ui segment">
+						<img src="./assets/task-5_sample_rate_1_nearest.png" title="Sample Rate 1 + Nearest Sampling">
+						<h5 class="ui center aligned container">Sample Rate 1 + Nearest Sampling</h5>
+					</div>
+					<div class="column ui segment">
+						<img src="./assets/task-5_sample_rate_1_bilinear.png" title="Sample Rate 1 + Bilinear Sampling">
+						<h5 class="ui center aligned container">Sample Rate 1 + Bilinear Sampling</h5>
+					</div>
+				</div>
+				<div class="row">
+					<div class="column ui segment">
+						<img src="./assets/task-5_sample_rate_16_nearest.png" title="Sample Rate 16 + Nearest Sampling">
+						<h5 class="ui center aligned container">Sample Rate 16 + Nearest Sampling</h5>
+					</div>
+					<div class="column ui segment">
+						<img src="./assets/task-5_sample_rate_16_bilinear.png" title="Sample Rate 16 + Bilinear Sampling">
+						<h5 class="ui center aligned container">Sample Rate 16 + Bilinear Sampling</h5>
+					</div>
+				</div>
+			</div>
+			<div class="ui info message">
+				<div class="header">[Task 5] Comment on the Comparison Result</div>
+				<div class="list">
+					<li>
+						Based on the result, bilinear sampling renders better results than nearest sampling. But the advantage of
+						bilinear sampling diminishes with increased sample rate. This is because with higher sample rate, for bilinear
+						sampling, the floor and ceil endpoints will become very close to each other, and the linear interpolation will
+						get similar value to either one of these two endpoints, which is essentially the same as nearest sampling
+						in practice. And it is also worth noting that bilinear sampling costs more computing power.
+					</li>
+					<li>
+						We can also see from the results that, generally speaking, the higher the sample rate we use, the smoother
+						the image we will get.
+					</li>
+					<li>
+						To summarize, for low sample rate, bilinear sampling can get better image than nearest sampling; but for high
+						sample rate, the results between these two approaches are similar, but nearest sampling costs less computing
+						resource.
+					</li>
+				</div>
+			</div>
+			<h3>Task 6: "Level sampling" with mipmaps for texture mapping</h3>
+			<h4>[Task 6] Pixel Sampling Explanation and Implementation Details</h4>
+			<p>
+				
+			</p>
+			<h4>[Task 5] Screenshots with Different Sample Rates for Comparison</h4>
+			<p></p>
+
+			<br><br>
+			<div class="ui right aligned container">
+				<h5>
+					Live version of this write-up is hosted at
+					<a href="https://xyuan195.github.io/cs184-proj1-webpage/">https://xyuan195.github.io/cs184-proj1-webpage/</a>
+				</h5>
+				<br><br>
+			</div>
+		</div>
 	</body>
 </html>
