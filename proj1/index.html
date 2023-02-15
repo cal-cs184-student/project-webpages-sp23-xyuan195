@@ -274,12 +274,12 @@
 			</p>
 			<p>
 				In function <b>Texture::get_level</b>, I calculate the dx and dy vectors by subtracting p_dx_uv and p_dy_uv
-				with p_uv respectively. Then I multiply these 2 vectors by the texture width and height to get the actual
-				coordinates in texture space (named as <b>dx_scaled</b> and <b>dy_scaled</b>). Then, we can calculate the level
-				by <b>log2(max(dx_scaled.norm(), dy_scaled.norm()))</b>. If the level sample method is L_NEAREST, we will round
-				the result to the nearest integer; if the level sample method is L_ZERO, we will return 0 directly; if the level
-				sample method is L_LINEAR, we will return the level value as is and handle it in <b>RasterizerImp</b> (described in
-				the next paragraph).
+				with p_uv, respectively. Then I multiply these 2 vectors by the texture width and height to get the actual
+				coordinates in the texture space (named as <b>dx_scaled</b> and <b>dy_scaled</b> in the code). Then, I calculate
+				the MIP map level by formula <b>log2(max(dx_scaled.norm(), dy_scaled.norm()))</b>. If the level sample method
+				is L_NEAREST, the function rounds the result to the nearest integer; if the level sample method is L_ZERO, it
+				returns 0 directly; if the level sample method is L_LINEAR, it returns the float level value as is and
+				handle it in <b>RasterizerImp</b> (described in the next paragraph).
 			</p>
 			<p>
 				Once we get the level value back from <b>Texture::get_level</b>, we will then resolve the color of the pixel. If
