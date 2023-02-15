@@ -289,9 +289,21 @@
 			</p>
 			<h4>[Task 6] Tradeoffs among different sampling techniques</h4>
 			<p>
-
+				First of all, supersampling with high sample rate definitely consumes the most memory, because it needs to
+				allocate the sample buffer by multiplying the sample rate. But the advantage of high sample rate is also obvious,
+				it usually results in better images.
 			</p>
-			<h4>[Task 6] Screenshots</h4>
+			<p>
+				Bilinear pixel sampling renders better image comparing to nearest pixel sampling. But that's with the cost of
+				speed due to linear interpolation. Also the better image argument for bilinear pixel sampling diminishes with high sample
+				rate.
+			</p>
+			<p>
+				As for level sampling, nearest and bilinear generates better images comparing to zero level sampling. But the speed
+				of these two is slower. Bilinear level sampling with bilinear pixel sampling (also called trilinear sampling)
+				is the slowest combination (under the same sample rate). But usually, it produces the best result.
+			</p>
+			<h4>[Task 6] Screenshots (my own png image with "svg/texmap/test6.svg" in the project repo)</h4>
 			<div class="ui two column grid">
 				<div class="row bordered">
 					<div class="column ui segment">
