@@ -281,12 +281,12 @@
 				sample method is L_LINEAR, we will return the level value as is and handle it in <b>RasterizerImp</b> (described in
 				the next paragraph).
 			</p>
-			<b>
+			<p>
 				Once we get the level value back from <b>Texture::get_level</b>, we will then resolve the color of the pixel. If
 				the level sample method isn't L_LINEAR, we will just take the sample from the texture using the level directly
 				(nearest or linear based on pixel sample method). If the level sampling method is L_LINEAR, then we need to perform
 				linear interpolation on the color from the floor level and the color from the ceil level.
-			</b>
+			</p>
 			<h4>[Task 6] Tradeoffs among different sampling techniques</h4>
 			<p>
 
