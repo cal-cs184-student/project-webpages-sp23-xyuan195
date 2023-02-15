@@ -259,7 +259,7 @@
 			<h4>[Task 6] Level Sampling Explanation and Implementation Details</h4>
 			<p>
 				Level sampling is to use pre-computed filtered version of the texture (also called MIP Maps) to perform texture
-				mapping. This techniques is especially useful when multiple texels can contribute to one single pixel footprint
+				mapping. This technique is especially useful when multiple texels can contribute to one single pixel footprint
 				in screen space (caused by perspective projections). In this case, pixel sampling can be expensive for a very small
 				area in the screen space (if we calculate the average of all covered texels). We define different levels in MIP
 				Map. Depending on how fast the mapped texture footprint increases, we will select the corresponding levels to
@@ -273,8 +273,20 @@
 				level sample method, and pass it in to the Texture object to calculate MIP map level.
 			</p>
 			<p>
-				In function <b>Texture::get_level</b>, I calculate the dx and dy vectors
+				In function <b>Texture::get_level</b>, I calculate the dx and dy vectors by subtracting p_dx_uv and p_dy_uv
+				with p_uv respectively. Then I multiply these 2 vectors by the texture width and height to get the actual
+				coordinates in texture space (named as <b>dx_scaled</b> and <b>dy_scaled</b>). Then, we can calculate the level
+				by <b>log2(max(dx_scaled.norm(), dy_scaled.norm()))</b>. If the level sample method is L_NEAREST, we will round
+				the result to the nearest integer; if the level sample method is L_ZERO, we will return 0 directly; if the level
+				sample method is L_LINEAR, we will return the level value as is and handle it in <b>RasterizerImp</b> (described in
+				the next paragraph).
 			</p>
+			<b>
+				Once we get the level value back from <b>Texture::get_level</b>, we will then resolve the color of the pixel. If
+				the level sample method isn't L_LINEAR, we will just take the sample from the texture using the level directly
+				(nearest or linear based on pixel sample method). If the level sampling method is L_LINEAR, then we need to perform
+				linear interpolation on the color from the floor level and the color from the ceil level.
+			</b>
 			<h4>[Task 6] Tradeoffs among different sampling techniques</h4>
 			<p>
 
