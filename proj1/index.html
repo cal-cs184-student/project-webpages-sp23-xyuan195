@@ -188,17 +188,18 @@
 			<h3>Task 5: "Pixel sampling" for texture mapping (<a href="https://cal-cs184-student.github.io/project-webpages-sp23-xyuan195/proj1/index.html">Github Page</a>)</h3>
 			<h4>[Task 5] Pixel Sampling Explanation and Implementation Details</h4>
 			<p>
-				Pixel sampling is a texture mapping method to sample the pixels on the texture image to apply the result to the
-				screen image. The goal of texture mapping is to make the images on screen more realistic without introducing
-				too much resource consuming computer graphics technics (imagine if we don't use texture mapping, we'd need to
-				draw these minor details on images to make them to look realistic).
+				Pixel sampling is a texture mapping method to sample the pixels on the texture image to apply the sampled result
+				back to the screen image. The goal of texture mapping is to make the images on screen more realistic without
+				introducing too much computing-intensive computer graphics techniques (imagine if we don't use texture mapping,
+				we'd need to draw these minor details individually to make them to look realistic).
 			</p>
 			<p>
-				The high-level idea of implementing pixel sampling is to translate screen pixel coordinates to texture pixel
-				coordinates by using the linear algebra view of barycentric coordinates, and then apply different sampling methods
-				to get the sample result in the texture. The translation formula is provided in the lecture notes: essentially,
-				we need three points on each of the screen space and texture space, and the 3 * 3 transform matrix can be calculated
-				as M_texture * M_screen ^ -1.
+				The high-level idea of implementing pixel sampling is to have a texture image beforehand, and translate screen
+				pixel coordinates to texture pixel coordinates by using the linear algebra view of barycentric coordinates, and
+				then apply different sampling methods (nearest or bilinear) to get the sample result in the texture. The
+				translation formula is provided in the lecture notes, but essentially, we can use three points on each of the
+				screen space and texture space, and construct the 3 * 3 transform matrix using formula
+				<b>M_texture * M_screen ^ -1</b>.
 			</p>
 			<p>
 				As for translating each pixel on the screen space to the texture space, I take the coordinate of the pixel on
