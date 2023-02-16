@@ -210,10 +210,10 @@
 			</p>
 			<p>
 				I implemented two kinds of pixel sampling: nearest and bilinear. For nearest sampling, once we got the actual
-				coordinates on the texture, I just round x and y to the nearest integer and get the color; for bilinear sampling,
-				I take the floor and ceil of both x and y, and run linear interpolation 3 times: first two are on the horizontal
-				direction (x-axis) to get the color of two endpoints of the vertical line formed by the sample point, the last one
-				is on the vertical direction (y-axis) to get the final color of the sample point.
+				coordinates on the texture, I just round x and y to the nearest integer and get the color on the texture; for
+				bilinear sampling, I take the floor and ceil of each of x and y, and run linear interpolation 3 times: the first
+				two are in the horizontal direction (x-axis) to get the color of two endpoints of the vertical line formed by
+				the sample point; the last one is in the vertical direction (y-axis) to get the final color of the sample point.
 			</p>
 			<h4>[Task 5] Screenshots</h4>
 			<div class="ui two column grid">
