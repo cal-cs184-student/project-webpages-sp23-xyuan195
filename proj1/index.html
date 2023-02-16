@@ -263,10 +263,13 @@
 			<p>
 				Level sampling is to use pre-computed filtered version of the texture (also called MIP Maps) to perform texture
 				mapping. This technique is especially useful when multiple texels can contribute to one single pixel footprint
-				in screen space (caused by perspective projections). In this case, pixel sampling can be expensive for a very small
-				area in the screen space (if we calculate the average of all covered texels). We define different levels in MIP
-				Map. Depending on how fast the mapped texture footprint increases, we will select the corresponding levels to
-				perform sampling. The faster the texture footprint increases, the higher level we should use.
+				in the screen space (caused by perspective projections). In this case, pixel sampling can be expensive for a very small
+				area in the screen space (if we calculate the average of all covered texels in the texture space). Level sampling
+				is to solve this issue. In this technique, we pre-compute different levels of filtered version of the texture,
+				and store them in a data structure called MIP Map. Depending on how fast the mapped texture footprint increases
+				(we can use derivative), we will select the corresponding levels to perform sampling. The faster the texture
+				footprint increases, the higher level we should use. This will significantly reduce compute time comparing to
+				pixel sampling.
 			</p>
 			<p>
 				As for implementation details, I first created function <b>RasterizerImp::get_barycentric_uv</b> to calculate
