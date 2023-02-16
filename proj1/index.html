@@ -266,7 +266,7 @@
 				in the screen space (caused by perspective projections). In this case, pixel sampling can be expensive for a very small
 				area in the screen space (if we calculate the average of all covered texels in the texture space). Level sampling
 				is to solve this issue. In this technique, we pre-compute different levels of filtered version of the texture,
-				and store them in a data structure called MIP Map. Depending on how fast the mapped texture footprint increases
+				and store them in a data structure called MIP Map. Depending on how fast the mapped texture footprint changes
 				(we can use derivative), we will select the corresponding levels to perform sampling. The faster the texture
 				footprint increases, the higher level we should use. This will significantly reduce compute time comparing to
 				pixel sampling.
@@ -275,23 +275,26 @@
 				As for implementation details, I first created function <b>RasterizerImp::get_barycentric_uv</b> to calculate
 				barycentric coordinates (in 2-D vector format) for any given screen space coordinates. Then, I use this function
 				to calculate barycentric coordinates for (x, y), (x + 1, y), (x, y + 1) for any given pixel in the screen space.
-				I construct the <b>SampleParams</b> object using these three calculated 2-D vectors with pixel sample method and
-				level sample method, and pass it in to the Texture object to calculate MIP map level.
+				At last, I construct the <b>SampleParams</b> object using these three calculated 2-D vectors with pixel sample
+				method (psm) and level sample method (lsm), and pass it in to the Texture object to calculate the corresponding
+				MIP map level.
 			</p>
 			<p>
 				In function <b>Texture::get_level</b>, I calculate the dx and dy vectors by subtracting p_dx_uv and p_dy_uv
 				with p_uv, respectively. Then I multiply these 2 vectors by the texture width and height to get the actual
 				coordinates in the texture space (named as <b>dx_scaled</b> and <b>dy_scaled</b> in the code). Then, I calculate
-				the MIP map level by formula <b>log2(max(dx_scaled.norm(), dy_scaled.norm()))</b>. If the level sample method
-				is L_NEAREST, the function rounds the result to the nearest integer; if the level sample method is L_ZERO, it
-				returns 0 directly; if the level sample method is L_LINEAR, it returns the float level value as is and
-				handle it in <b>RasterizerImp</b> (described in the next paragraph).
+				the MIP map level by formula <b>log2(max(dx_scaled.norm(), dy_scaled.norm()))</b>. This is basically how fast
+				the mapped texture footprint changes. If the level sample method is L_NEAREST, the function rounds the result to
+				the nearest integer; if the level sample method is L_ZERO, it returns 0 directly; if the level sample method is
+				L_LINEAR, it returns the float level value as is and handle it in <b>RasterizerImp</b> (described in the next
+				paragraph).
 			</p>
 			<p>
-				Once we get the level value back from <b>Texture::get_level</b>, we will then resolve the color of the pixel. If
-				the level sample method isn't L_LINEAR, we will just take the sample from the texture using the level directly
-				(nearest or linear based on pixel sample method). If the level sampling method is L_LINEAR, then we need to perform
-				linear interpolation on the color from the floor level and the color from the ceil level.
+				Once we get the level value back from <b>Texture::get_level</b>, we will then use it resolve the color of the
+				pixel in the screen space. If the level sample method isn't L_LINEAR, we will just take the sample from the
+				texture using the level directly (nearest or linear based on pixel sample method). If the level sampling method
+				is L_LINEAR, then we need to perform linear interpolation on the color from the floor level and the color from
+				the ceil level.
 			</p>
 			<h4>[Task 6] Tradeoffs among different sampling techniques</h4>
 			<p>
@@ -307,7 +310,8 @@
 			<p>
 				As for level sampling, nearest and bilinear generates better images comparing to zero level sampling. But the speed
 				of these two is slower. Bilinear level sampling with bilinear pixel sampling (also called trilinear sampling)
-				is the slowest combination (under the same sample rate). But usually, it produces the best result.
+				is the slowest combination (under the same sample rate) due to multiple round of linear interpolation for each
+				pixel. But usually, it produces the best result.
 			</p>
 			<h4>[Task 6] Screenshots (my own png image with "svg/texmap/test6.svg" in the project repo)</h4>
 			<div class="ui two column grid">
