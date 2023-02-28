@@ -31,6 +31,61 @@
 			</a>
 			)
 		</h3>
+		<h4>[Part 1] Walk Through on Implementation Details</h4>
+		<p>
+			De Casteljau algorithm is a recursive way to evaluate Bezier curves using linear interpolation.
+		</p>
+		<p>
+			To calculate each point at the next level, I perform linear interpolation for the current point (with the same
+			index) and the next point (with index + 1) at the current level, except for the last point, which I just copy it
+			to the next level. To be precise, the linear interpolation is calculated as
+			<b>(1 - t) * points.at(i) + t * points.at(i + 1)</b>, where t is the value between 0 and 1 to evaluate the Bezier
+			curve at.
+		</p>
+
+		<h4>[Part 1] Screenshots of my own ".bzc" file</h4>
+		<div class="ui two column grid">
+			<div class="row">
+				<div class="column ui segment">
+					<img src="./assets/task-1_level0.png">
+					<h5 class="ui center aligned container">Level 0</h5>
+				</div>
+				<div class="column ui segment">
+					<img src="./assets/task-1_level1.png">
+					<h5 class="ui center aligned container">Level 1</h5>
+				</div>
+			</div>
+			<div class="row">
+				<div class="column ui segment">
+					<img src="./assets/task-1_level2.png">
+					<h5 class="ui center aligned container">Level 2</h5>
+				</div>
+				<div class="column ui segment">
+					<img src="./assets/task-1_level3.png">
+					<h5 class="ui center aligned container">Level 3</h5>
+				</div>
+			</div>
+			<div class="row">
+				<div class="column ui segment">
+					<img src="./assets/task-1_level4.png">
+					<h5 class="ui center aligned container">Level 4</h5>
+				</div>
+				<div class="column ui segment">
+					<img src="./assets/task-1_level5.png">
+					<h5 class="ui center aligned container">Level 5</h5>
+				</div>
+			</div>
+			<div class="row">
+				<div class="column ui segment">
+					<img src="./assets/task-1_curve.png">
+					<h5 class="ui center aligned container">Final Bezier Curve</h5>
+				</div>
+				<div class="column ui segment">
+					<img src="./assets/task-1_curve_only.png">
+					<h5 class="ui center aligned container">Bezier Curve Only</h5>
+				</div>
+			</div>
+		</div>
 
 		<h3>Part 2: Bezier surfaces with separable 1D de Casteljau (
 			<a href="https://cal-cs184-student.github.io/project-webpages-sp23-xyuan195/proj2/index.html">
