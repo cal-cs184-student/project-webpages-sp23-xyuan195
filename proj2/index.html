@@ -145,6 +145,51 @@
 			)
 		</h3>
 
+    <h4>[Part 3] Walk Through on Implementation Details</h4>
+    <p>
+      The high-level idea of implementing area-weighted vertex model is to use the <b>Halfedge</b> data structure to
+      iterate through the adjacent vertexes (and their corresponding faces), and get the normal vector and the area of
+      each face, and calculate the weighted average. Please see detailed steps as follows:
+    </p>
+    <p>
+      1) Initialize <b>Vector3D sum</b> and <b>double total_area</b> variables to accumulate calculated result in each iteration.
+    </p>
+    <p>
+      2) Construct the loop structure using <b>Halfedge</b> data structure (this is very similar to
+      <b>printNeighborPositions</b> function in the Halfedge primer): first, get the halfedge (actually it's <b>HalfedgeCIter</b>)
+      of the target vertex and put it in a pointer <b>h</b>, which will be used for iteration, before the loop; then start a
+      <b>do.. while</b> loop.
+    </p>
+    <p>
+      3) Inside the loop, get the twin of the halfedge, and all vertexes' positions (say <b>v0, v1, v2</b>) of the face
+      formed by the twin halfedge.
+    </p>
+    <p>
+      4) Calculate the 2 edge vectors started at vertex v0 (<b>v1 - v0</b> and <b>v2 - v0</b>)
+    </p>
+    <p>
+      5) Calculate the cross product of the 2 edge vectors by calling <b>Vector3D::cross</b>.
+    </p>
+    <p>
+      6) Get the unit vector of the cross product by calling <b>Vector3D::unit</b>, which is the normal of the face.
+    </p>
+    <p>
+      7) Get the area of the face by <b>cross_product.norm() / 2</b>.
+    </p>
+    <p>
+      8) Accumulate <b>Vector3D sum</b> and <b>double total_area</b> variables by <b>sum += area * face_norm;</b> and
+      <b>total_area += area;</b>
+    </p>
+    <p>
+      9) Assign <b>h_twin->next()</b> to pointer <b>h</b>, which was set up before the loop in step 2).
+    </p>
+    <p>
+      10) Terminate the loop if <b>h</b> is the same as the halfedge of the target vertex.
+    </p>
+    <p>
+      11) Finally, calculate the weighted average by <b>sum / total_area</b>.
+    </p>
+
     <h4>[Part 3] Screenshots of "dae/teapot.dae"</h4>
     <div class="ui two column grid">
       <div class="row">
