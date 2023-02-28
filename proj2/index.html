@@ -594,7 +594,7 @@
 		</h3>
     <h4>[Part 6] Walk Through on Implementation Details</h4>
     <p>
-      <b>Step 1:</b> Calculate new position for exisitng vertexes in the mesh. To do that, I iterate all vertexes in the mesh (starting
+      <b>Step 1:</b> Calculate the new position for exisitng vertexes in the mesh. To do that, I iterate all vertexes in the mesh (starting
       at <b>mesh.verticesBegin()</b> and ending at <b>mesh.verticesEnd()</b>. For each vertex, calculate its degree
       (variable <b>n</b> in the code) by calling <b>Vertex::degree</b>, and use it to calculate <b>u</b>
       (<b>double u = n == 3 ? 0.1875 : 3.0 / (8.0 * (double) n)</b>). Then loop through all this vertex's neighbors
