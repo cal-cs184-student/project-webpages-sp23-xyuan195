@@ -612,6 +612,28 @@
       position to the instance variable <b>Edge::newPosition</b>, meanwhile, I set <b>Edge::isNew</b> to false for the
       current edge being iterated on.
     </p>
+    <p>
+      <b>Step 3:</b> Split all existing edges in the mesh. I use <b>HalfedgeMesh::splitEdge</b> function created in
+      Part 5 to achieve this goal. One modification I made to <b>HalfedgeMesh::splitEdge</b> function is that I set
+      instance variable <b>Edge::isNew</b> to true for newly created edges (e2 and e3) during subdivision that cuts across
+      a triangle. This flag will be used in the following step (to skip flipping for these new edges). I iterate through
+      all edges in the mesh, skip the ones that are created during the split process, which have
+      <b>newPosition.norm2() <= 0.001</b>. Then for each edge, I call <b>HalfedgeMesh::splitEdge</b>, once I get the
+      return value (the mid-point vertex) of that edge, I then copy the <b>newPosition</b> of the edge to <b>position</b>
+      of the new vertex, meanwhile, I set <b>Vertex::isNew</b> to true for the new vertex.
+    </p>
+    <p>
+      <b>Step 4:</b> Flip edges that are newly created and connect one old vertex and one new vertex. To do this, I iterate
+      all vertexes in the mesh after edge splits. Skip the ones with <b>isNew</b> as true. And if
+      <b>e->halfedge()->vertex()->isNew != e->halfedge()->twin()->vertex()->isNew</b>, call <b>HalfedgeMesh::flipEdge</b>
+      to flip the edge. Here I spent a lot of time on debugging this step because I noticed that my edge splits worked
+      as expected, but once I applied the edge flips, the images got very weird. It turned out that I initially forgot
+      about the old edge check at the beginning of each iteration.
+    </p>
+    <p>
+      <b>Step 5:</b> Assign <b>Vertex::newPosition</b> to <b>Vertex::position</b> for each vertex in the mesh, regardless
+      of old vs. new vertexes.
+    </p>
 
     <br><br>
     <div class="ui right aligned container">
