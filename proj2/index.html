@@ -363,6 +363,200 @@
 			)
 		</h3>
 
+    <h4>[Part 5] Walk Through on Implementation Details</h4>
+    <p>
+      Similar to Part 4, My approach of solving this problem is to draw out what will change after the edge split, in
+      terms of edges, faces, vertexes, and halfedges. I also drew out a simple mesh before and after the edge split.
+      Please see below:
+    </p>
+    <div class="ui two column grid">
+      <div class="row">
+        <div class="column ui segment">
+          <img src="./assets/task-5_draw_before.png">
+          <h5 class="ui center aligned container">A simple mesh before the edge split</h5>
+        </div>
+        <div class="column ui segment">
+          <img src="./assets/task-5_draw_after.png">
+          <h5 class="ui center aligned container">A simple mesh after the edge split</h5>
+        </div>
+      </div>
+    </div>
+    <p>
+      From the above drawings, I can see I have:
+    </p>
+    <ul class="ui">
+      <li>4 vertexes:</li>
+      <ul>
+        <li>Vertex A (v_a in code)</li>
+        <li>Vertex B (v_b in code)</li>
+        <li>Vertex C (v_c in code)</li>
+        <li>Vertex D (v_d in code)</li>
+      </ul>
+      <li>2 faces:</li>
+      <ul>
+        <li>f0</li>
+        <li>f1</li>
+      </ul>
+      <li>6 halfedges:</li>
+      <ul>
+        <li>he0 (the halfedge of the input edge)</li>
+        <li>he1 (the twin of he0)</li>
+        <li>he_a (the halfedge originated from vertex A)</li>
+        <li>he_b (the halfedge originated from vertex B)</li>
+        <li>he_c (the halfedge originated from vertex C)</li>
+        <li>he_d (the halfedge originated from vertex D)</li>
+      </ul>
+    </ul>
+
+    <p>After the split, the following elements will be added</p>
+    <li>A new vertex:</li>
+    <ul>
+      <li>Vertex ret (the one will be returned after the split function call)</li>
+    </ul>
+    <li>2 new faces:</li>
+    <ul>
+      <li>f2</li>
+      <li>f3</li>
+    </ul>
+    <li>6 new halfedges:</li>
+    <ul>
+      <li>he2</li>
+      <li>he3</li>
+      <li>he4</li>
+      <li>he5</li>
+      <li>he6</li>
+      <li>he7</li>
+    </ul>
+
+    <p>
+      Unlike Part 4, after the edge split, I will have more elements in the mesh, with their neighbors changing. So my code
+      can be divided into 4 steps:
+    </p>
+    <p>
+      <b>Step 1:</b> Get all elements in the drawing, and assign them to local variables.
+    </p>
+    <p>
+      <b>Step 2:</b> Create new elements listed above to the mesh.
+    </p>
+    <p>
+      <b>Step 3:</b> Use <b>Halfedge::setNeighbors</b> to update neighbors to match the graph after the edge split. I ended up
+      with the following table to help me visualize the process.
+    </p>
+    <table class="ui celled table">
+      <thead>
+      <tr>
+        <th>Halfedge</th>
+        <th>Next</th>
+        <th>Twin</th>
+        <th>Vertex</th>
+        <th>Edge</th>
+        <th>Face</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>he0</td>
+        <td>he_b</td>
+        <td>he1</td>
+        <td>ret</td>
+        <td>e0</td>
+        <td>f0</td>
+      </tr>
+      <tr>
+        <td>he1</td>
+        <td>he6</td>
+        <td>he0</td>
+        <td>v_b</td>
+        <td>e0</td>
+        <td>f2</td>
+      </tr>
+      <tr>
+        <td>he2</td>
+        <td>he5</td>
+        <td>he3</td>
+        <td>v_a</td>
+        <td>e1</td>
+        <td>f3</td>
+      </tr>
+      <tr>
+        <td>he3</td>
+        <td>he_a</td>
+        <td>he2</td>
+        <td>ret</td>
+        <td>e1</td>
+        <td>f1</td>
+      </tr>
+      <tr>
+        <td>he4</td>
+        <td>he0</td>
+        <td>he5</td>
+        <td>v_c</td>
+        <td>e2</td>
+        <td>f0</td>
+      </tr>
+      <tr>
+        <td>he5</td>
+        <td>he_c</td>
+        <td>he4</td>
+        <td>ret</td>
+        <td>e2</td>
+        <td>f3</td>
+      </tr>
+      <tr>
+        <td>he6</td>
+        <td>he_d</td>
+        <td>he7</td>
+        <td>ret</td>
+        <td>e3</td>
+        <td>f2</td>
+      </tr>
+      <tr>
+        <td>he7</td>
+        <td>he3</td>
+        <td>he6</td>
+        <td>v_d</td>
+        <td>e3</td>
+        <td>f1</td>
+      </tr>
+      <tr>
+        <td>he_a</td>
+        <td>he7</td>
+        <td>he_a->twin()</td>
+        <td>he_a->vertex()</td>
+        <td>he_a->edge()</td>
+        <td>f1</td>
+      </tr>
+      <tr>
+        <td>he_b</td>
+        <td>he4</td>
+        <td>he_b->twin()</td>
+        <td>he_b->vertex()</td>
+        <td>he_b->edge()</td>
+        <td>f0</td>
+      </tr>
+      <tr>
+        <td>he_c</td>
+        <td>he2</td>
+        <td>he_c->twin()</td>
+        <td>he_c->vertex()</td>
+        <td>he_c->edge()</td>
+        <td>f3</td>
+      </tr>
+      <tr>
+        <td>he_d</td>
+        <td>he1</td>
+        <td>he_d->twin()</td>
+        <td>he_d->vertex()</td>
+        <td>he_d->edge()</td>
+        <td>f2</td>
+      </tr>
+      </tbody>
+    </table>
+    <p>
+      <b>Step 4:</b> Reset halfedge pointers for all faces, edges, and vertexes involved
+      (<b>f0, f1, f2, f3, v_a, v_b, v_c, v_d, ret, e0, e1, e2, e3</b>).
+    </p>
+
 		<h3>Part 6: Loop subdivision for mesh upsampling (
 			<a href="https://cal-cs184-student.github.io/project-webpages-sp23-xyuan195/proj2/index.html">
 				https://cal-cs184-student.github.io/project-webpages-sp23-xyuan195/proj2/index.html
