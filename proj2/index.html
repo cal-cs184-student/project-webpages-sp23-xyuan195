@@ -634,6 +634,47 @@
       <b>Step 5:</b> Assign <b>Vertex::newPosition</b> to <b>Vertex::position</b> for each vertex in the mesh, regardless
       of old vs. new vertexes.
     </p>
+    <h4>[Part 6] Comparison of pre-processing for "dae/cube.dae"</h4>
+    <div class="ui two column grid">
+      <div class="row">
+        <div class="column ui segment">
+          <img src="./assets/task-6_original_init.png">
+          <h5 class="ui center aligned container">Initial Image without Pre-processing</h5>
+        </div>
+        <div class="column ui segment">
+          <img src="./assets/task-6_original_final.png">
+          <h5 class="ui center aligned container">Upsampled Image without Pre-processing</h5>
+        </div>
+      </div>
+      <div class="row">
+        <div class="column ui segment">
+          <img src="./assets/task-6_pre_init.png">
+          <h5 class="ui center aligned container">Initial Image with Pre-processing</h5>
+        </div>
+        <div class="column ui segment">
+          <img src="./assets/task-6_pre_final.png">
+          <h5 class="ui center aligned container">Upsampled Image with Pre-processing</h5>
+        </div>
+      </div>
+    </div>
+    <div class="ui info message">
+      <div class="header">[Part 6] Comments on the Comparison Result</div>
+      <p>
+        For pre-processing, before I do any upsampling, I split edges inside the cube faces to make each cube both
+        horizontal-symmetric and vertical symmetric, which also maintains the center-symmetric property before the
+        pre-processing.
+      </p>
+      <p>
+        We can see from the results: with pre-processing, the upsampled image maintains cube-center-symmetric, comparing
+        to the one that doesn't use edge-split pre-processing.
+      </p>
+      <p>
+        I think this is because without edge-split pre-processing, the vertexes on the cube may have different degrees:
+        for some vertexes, the degree is 5; and for others, the degree is 3. This will lead to different results in the
+        calculation in step 1. But with pre-processing, I make sure all vertexes' degree is 6, such that there's no
+        difference when we calculate new positions of the existing vertexes.
+      </p>
+    </div>
 
     <br><br>
     <div class="ui right aligned container">
