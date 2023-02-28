@@ -110,8 +110,27 @@
 
 		<h4>[Part 2] Walk Through on Implementation Details</h4>
 		<p>
-
+			Using de Casteljau subdivision to evaluate Bezier surfaces in 3D is an extension of using it to evaluate Bezier
+			curves in 2D. Here are the detailed steps:
 		</p>
+		<p>
+      First, create <b>BezierPatch::evaluateStep</b> function to perform one step of de Casteljau's algorithm. This is
+      very similar to the implementation of Part 1, except this is for <b>Vector3D</b>: use linear interpolation to
+      evaluate each point in next step using the point with the same index and the point with index + 1 in the current
+      step, and copy the last point over to the next step.
+    </p>
+    <p>
+      Secondly, create <b>BezierPatch::evaluate1D</b> function to fully evaluate de Casteljau's algorithm for a vector
+      of points at parameter t. This function will recursively call <b>BezierPatch::evaluateStep</b> with the result
+      from the last iteration. The total number of iterations is number of control points minus one (<b>points.size() - 1</b>).
+      Then the first point of the final evaluated list of control points is the point on the Bezier curve.
+    </p>
+    <p>
+      Finally, create <b>Vector3D BezierPatch::evaluate</b> function to take parameter <b>(u, v)</b> to fully evaluate
+      the Bezier surface. The steps are: for each row of control points, we call <b>BezierPatch::evaluate1D</b> with
+      parameter <b>u</b> to get a vector of intermediate points; then call <b>BezierPatch::evaluate1D</b> with this vector
+      of intermediate points and parameter <b>v</b> to get the point on the Bezier surface.
+    </p>
 
 		<h4>[Part 2] Screenshot of "bez/teapot.bez"</h4>
 		<div class="ui segment">
