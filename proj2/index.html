@@ -634,6 +634,17 @@
       <b>Step 5:</b> Assign <b>Vertex::newPosition</b> to <b>Vertex::position</b> for each vertex in the mesh, regardless
       of old vs. new vertexes.
     </p>
+
+    <h4>[Part 6] Comments on Loop subdivision effects on sharp edges and corners</h4>
+    <p>
+      Sharp edges and corners will "stand out" after Loop subdivision based on my observation: they become far away from
+      other positions, relatively. I think this is because these sharp edges and corners tend to use less triangles
+      (then lower degree to the vertexes) to render in the original mesh because they have low continuity. During the
+      calculation of the new positions of the old vertexes in the algorithm, if the degree of a vertex is 3, the value
+      of <b>u</b> is hard-coded. To solve this, we can pre-process by splitting edges before upsampling to let these
+      vertexes have higher degrees. We can see the comparison result of pre-processing in the next section.
+    </p>
+
     <h4>[Part 6] Comparison of pre-processing for "dae/cube.dae"</h4>
     <div class="ui two column grid">
       <div class="row">
