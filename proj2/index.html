@@ -211,6 +211,137 @@
 			)
 		</h3>
 
+    <h4>[Part 4] Walk Through on Implementation Details</h4>
+    <p>
+      My approach of solving this problem is to draw out what will change after the edge flip, in terms of edges, faces,
+      vertexes, and halfedges. I found what works best for me is to draw out a simple mesh before and after the edge flip.
+      Please see below:
+    </p>
+    <div class="ui two column grid">
+      <div class="row">
+        <div class="column ui segment">
+          <img src="./assets/task-4_draw_before.png">
+          <h5 class="ui center aligned container">A simple mesh before the edge flips</h5>
+        </div>
+        <div class="column ui segment">
+          <img src="./assets/task-4_draw_after.png">
+          <h5 class="ui center aligned container">A simple mesh after the edge flips</h5>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      From the above drawings, I can see I have:
+    </p>
+    <ul class="ui">
+      <li>4 vertexes:</li>
+      <ul>
+        <li>Vertex A (v_a in code)</li>
+        <li>Vertex B (v_b in code)</li>
+        <li>Vertex C (v_c in code)</li>
+        <li>Vertex D (v_d in code)</li>
+      </ul>
+      <li>2 faces:</li>
+      <ul>
+        <li>f0</li>
+        <li>f1</li>
+      </ul>
+      <li>6 halfedges:</li>
+      <ul>
+        <li>he0 (the halfedge of the input edge)</li>
+        <li>he1 (the twin of he0)</li>
+        <li>he2</li>
+        <li>he3</li>
+        <li>he4</li>
+        <li>he5</li>
+      </ul>
+    </ul>
+
+    <p>
+      After the flip, I still have the same amount of elements, but their neighbors are changed. So essentially, my code
+      can be divided into 3 steps:
+    </p>
+    <p>
+      <b>Step 1:</b> Get all elements in the drawing, and assign them to local variables.
+    </p>
+    <p>
+      <b>Step 2:</b> Use <b>Halfedge::setNeighbors</b> to update neighbors to match the graph after the edge flip. I ended up
+      with the following table to help me visualize the process.
+    </p>
+    <table class="ui celled table">
+      <thead>
+        <tr>
+          <th>Halfedge</th>
+          <th>Next</th>
+          <th>Twin</th>
+          <th>Vertex</th>
+          <th>Edge</th>
+          <th>Face</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>he0</td>
+          <td>he5</td>
+          <td>he1</td>
+          <td>v_c</td>
+          <td>e0</td>
+          <td>f0</td>
+        </tr>
+        <tr>
+          <td>he1</td>
+          <td>he3</td>
+          <td>he0</td>
+          <td>v_d</td>
+          <td>e0</td>
+          <td>f1</td>
+        </tr>
+        <tr>
+          <td>he2</td>
+          <td>he0</td>
+          <td>he2->twin()</td>
+          <td>v_b</td>
+          <td>he2->edge()</td>
+          <td>f0</td>
+        </tr>
+        <tr>
+          <td>he3</td>
+          <td>he4</td>
+          <td>he3->twin()</td>
+          <td>v_c</td>
+          <td>he3->edge()</td>
+          <td>f1</td>
+        </tr>
+        <tr>
+          <td>he4</td>
+          <td>he1</td>
+          <td>he4->twin()</td>
+          <td>v_a</td>
+          <td>he4->edge()</td>
+          <td>f1</td>
+        </tr>
+        <tr>
+          <td>he5</td>
+          <td>he2</td>
+          <td>he5->twin()</td>
+          <td>v_d</td>
+          <td>he5->edge()</td>
+          <td>f0</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      <b>Step 3:</b> Reset halfedge pointers for all faces, edges, and vertexes involved
+      (<b>f0, f1, v_a, v_b, v_c, v_d, e0</b>).
+    </p>
+
+    <p>
+      The process/logic looks very simple, but I did spend a big chunk of time on debugging this problem. I initially
+      wanted to take a shortcut to set the new neighbors directly without listing them out on a scratch paper. But it
+      turned out I missed out several halfedges in step 2 and several vertexes in step 3. As I mentioned above, the
+      drawings and the transition table really helped me get this right.
+    </p>
+
     <h4>[Part 4] Screenshots of before/after edge flips</h4>
     <div class="ui two column grid">
       <div class="row">
