@@ -58,7 +58,20 @@
 
     <h4>[Part 1] Explanation of the Triangle Intersection Algorithm</h4>
     <p>
-
+      I create a function <b>moller_trumbore</b> to use the Moller Trumbore formula. And the intersection is the first
+      elements of the Vector3D result.
+    </p>
+    <p>
+      Then I compare the calculated t with r.min_t and r.max_t. If <b>t</b> is out of the range, then there is no intersection.
+    </p>
+    <p>
+      Then I get the coordinate of the intersection by <b>r.o + t * r.d</b>. Then I calculate its barycentric coordinates
+      using triangle areas.
+    </p>
+    <p>
+      After I get the barycentric coordinates of the hit point, I check all its coordinates. If any of them is out of range
+      [0, 1], or the sum of these 3 coordinates is bigger than 1, I consider this hit point is outside the triangle.
+      Otherwise, I set <b>r.max_t</b> to the calculated t, and return true.
     </p>
 
     <h4>[Part 1] Some Images with Normal Shading</h4>
