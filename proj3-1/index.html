@@ -54,6 +54,18 @@
     <h3>Part 3: Direct Illumination</h3>
 
     <h4>[Part 3] Walk Through on Implementations of the Direct Lighting Function</h4>
+
+    <p>
+      Both implementations of direct illumination function uses zero-bound illumination. So I'll briefly describe how it
+      works in my implementation. In function <b>zero_bounce_radiance</b> function, I check the emission of the intersection
+      by calling <b>isect.bsdf->get_emission()</b>. Then I calculate its norm2. If it is smaller than <b>0.0001</b> (an
+      arbitrary small float number), I consider it is not a light source and return a Vector3D with all 0 values. Otherwise,
+      this is a light source and I return the emission value directly.
+    </p>
+    <p>
+      For direct illumination with uniform hemisphere sampling
+    </p>
+
     <h4>[Part 3] Images with Both Implementations of the Direct Lighting Function</h4>
     <h4>[Part 3] Noise Comparison between Both Implementations of the Direct Lighting Function</h4>
     <h4>[Part 3] Comparison between Both Implementations of the Direct Lighting Function</h4>
@@ -251,7 +263,7 @@
       Then I start the loop, the majority of the inner-loop processing is the same as the previous parts. The difference
       is in each iteration, I calculate the illum of the result of <b>est_radiance_global_illumination</b>, and then add
       it to s1, and add its square value to s2. And then I check condition <b>i % samplesPerBatch == 0</b>. If this
-      condition is true, then I determine whether the sampling has converged, and we can stop the iteration early. To do
+      condition is true, I need to determine whether the sampling has converged so far, and we can stop the iteration early. To do
       that, I need to calculate the mean of the sampled results <b>double u = s1 / (double) i</b>, and the variance of
       the sampled results <b>double variance = (s2 - s1 * s1 / (double) i) / (i - 1)</b>. Then I need to calculate the
       value of variable <b>I</b> by <b>double I = 1.96 * (sqrt(variance) / sqrt((double) i))</b>. After this, I can then
