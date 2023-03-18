@@ -113,6 +113,15 @@
       Then I add the final result to <b>L_out</b>. This concludes the implementation of
       <b>at_least_one_bounce_radiance</b> function.
     </p>
+    <p>
+      Then I modify <b>est_radiance_global_illumination</b> function to use <b>at_least_one_bounce_radiance</b> function.
+      The final <b>L_out</b> is calculated as <b>zero_bounce_radiance(r, isect) + at_least_one_bounce_radiance(r, isect)</b>.
+    </p>
+    <p>
+      Finally, I need to modify <b>raytrace_pixel</b> function. For each sample ray, I set its depth to <b>max_ray_depth</b>,
+      such that we can terminate the recursion call of <b>at_least_one_bounce_radiance</b> function if the max ray depth
+      is reached.
+    </p>
 
     <h4>[Part 4] Images Rendered with Global Illumination</h4>
     <h4>[Part 4] Comparison between Direct and Indirect Illumination</h4>
