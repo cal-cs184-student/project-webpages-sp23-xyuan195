@@ -63,7 +63,21 @@
       this is a light source and I return the emission value directly.
     </p>
     <p>
-      For direct illumination with uniform hemisphere sampling
+      For direct illumination with uniform hemisphere sampling, I create a loop with max iteration as <b>num_samples</b>.
+      Inside the loop, first I take a sample <b>sample_o</b> using <b>hemisphereSampler->get_sample()</b>. Its resulting Vector３D value
+      is in object coordinates. I then calculate its world coordinates value <b>sample_w</b> by <b>o2w * sample_o</b>.
+      Then I need to normalize <b>sample_w</b> by calling <b>sample_w.normalize()</b>. Secondly, I create a ray using
+      <b>hit_p</b> as the origin and normalized <b>sample_w</b> as the direction, and set its min_t to <b>EPS_F</b>. Then
+      I check whether this is any intersection between this new ray and the objects in the scene by calling
+      <b>bvh->intersect(ray_from_hit_p, &light_isect)</b>. If the result is false, I just skip this sample and continue
+      the loop. Otherwise, the <b>light_isect</b> variable will be populated with the intersection information of the new
+      ray. Because we only care about direct illumination in this function, so we must make sure the new intersection is
+      a light source. So I get the Li value by <b>light_isect.bsdf->get_emission()</b>，and compare all its cooridates
+      with EPS_F. If all of them are smaller than EPS_F, then this is not a light source. I just skip this sample and
+      continue the loop. Otherwise, I get the <b>brdf</b> of this light source by calling <b>isect.bsdf->f(w_out, -sample_o)</b>,
+      and get the cosine theta by calculating the dot product of the intersect normal and <b>sample_w</b> (in world coordinates).
+      The <b>pdf</b> of any ray in uniformly sampled hemisphere is <b>0.5 / PI</b>. So I accumulate <b>L_out</b> with
+      <b>(brdf * Li * cos) / pdf</b>. After exiting the loop, I return the averaged L_out by calling <b>L_out / num_samples</b>。
     </p>
 
     <h4>[Part 3] Images with Both Implementations of the Direct Lighting Function</h4>
