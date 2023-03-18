@@ -73,7 +73,13 @@
     <p>
       Having <b>sample_f</b> function ready, I can start the implementation of <b>PathTracer::at_least_one_bounce_radiance</b>
       function. First of all, I check the depth of the incoming ray object: if it is equal to 0, that means we've reached
-      the max ray depth, I just return <b>L_out</b> directly.
+      the max ray depth, I just return <b>L_out</b> directly. This is the base case of this recursion function. If the
+      ray depth is bigger than 0, we can continue the process. Firstly, I add <b>one_bounce_radiance(r, isect)</b> to
+      <b>L_out</b>.
+    </p>
+    <p>
+      Then, I take a sample using the outgoing light direction <b>w_out</b> by calling <b>sample_f</b> function we created.
+      This will give us a incoming light direction <b>wi</b> and its pdf <b>pdf</b>.
     </p>
 
     <h4>[Part 4] Images Rendered with Global Illumination</h4>
