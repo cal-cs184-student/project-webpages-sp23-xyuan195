@@ -101,7 +101,61 @@
     </p>
 
     <h4>[Part 3] Images with Both Implementations of the Direct Lighting Function</h4>
+
+    <div class="ui info message">
+      All below images are generated with sample rate per pixel as 16, and 8 light rays.
+    </div>
+    <div class="ui two column grid">
+      <div class="row">
+        <div class="column ui segment">
+          <img src="./assets/part3-bunney-H.png">
+          <h5 class="ui center aligned container">Uniform Hemisphere Sampling for CBbunny.dae</h5>
+        </div>
+        <div class="column ui segment">
+          <img src="./assets/part3-bunney-D.png">
+          <h5 class="ui center aligned container">Importance Sampling for CBbunny.dae</h5>
+        </div>
+      </div>
+      <div class="row">
+        <div class="column ui segment">
+          <img src="./assets/part3-spheres-H.png">
+          <h5 class="ui center aligned container">Uniform Hemisphere Sampling for CBspheres_lambertian.dae</h5>
+        </div>
+        <div class="column ui segment">
+          <img src="./assets/part3-spheres-D.png">
+          <h5 class="ui center aligned container">Importance Sampling for CBspheres_lambertian.dae</h5>
+        </div>
+      </div>
+    </div>
+
     <h4>[Part 3] Noise Comparison between Both Implementations of the Direct Lighting Function</h4>
+
+    <div class="ui info message">
+      All below images are generated with sample rate per pixel as 1.
+    </div>
+    <div class="ui two column grid">
+      <div class="row">
+        <div class="column ui segment">
+          <img src="./assets/part3-bunney-l1.png">
+          <h5 class="ui center aligned container">1 Light Ray</h5>
+        </div>
+        <div class="column ui segment">
+          <img src="./assets/part3-bunney-l4.png">
+          <h5 class="ui center aligned container">4 Light Rays</h5>
+        </div>
+      </div>
+      <div class="row">
+        <div class="column ui segment">
+          <img src="./assets/part3-bunney-l16.png">
+          <h5 class="ui center aligned container">1 Light Rays</h5>
+        </div>
+        <div class="column ui segment">
+          <img src="./assets/part3-bunney-l64.png">
+          <h5 class="ui center aligned container">1 Light Rays</h5>
+        </div>
+      </div>
+    </div>
+
     <h4>[Part 3] Comparison between Both Implementations of the Direct Lighting Function</h4>
 
     <h3>Part 4: Global Illumination</h3>
