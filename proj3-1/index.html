@@ -79,6 +79,15 @@
       The <b>pdf</b> of any ray in uniformly sampled hemisphere is <b>0.5 / PI</b>. So I accumulate <b>L_out</b> with
       <b>(brdf * Li * cos) / pdf</b>. After exiting the loop, I return the averaged L_out by calling <b>L_out / num_samples</b>。
     </p>
+    <p>
+      For direct illumination with importance sampling, I loop through all lights in the scene. Inside of the loop,
+      I need to get the sample size of the light source. If the light is a point light, the sample size is <b>1</b>; otherwise,
+      the sample size is <b>ns_area_light</b>. Then, I create an intermediate Vector3D variable <b>L_inter</b>, which is
+      the accumulator of the radiance of all samples of this light. Then I create an inner loop to loop through the sample_size.
+      In each of the inner iteration, I call <b>light->sample_L</b> to take a sample from the light to the hit point.
+      This function will populate 3 variables: <b>wi</b>, <b>distToLight</b>, and <b>pdf</b>. Next, I calculate the
+      value of <b>wi</b> in object coordinates and store it in <b>wi_o</b>.
+    </p>
 
     <h4>[Part 3] Images with Both Implementations of the Direct Lighting Function</h4>
     <h4>[Part 3] Noise Comparison between Both Implementations of the Direct Lighting Function</h4>
