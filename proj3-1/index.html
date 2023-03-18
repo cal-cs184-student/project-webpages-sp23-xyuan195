@@ -34,7 +34,26 @@
     <h3>Part 1: Ray Generation and Scene Intersection</h3>
     <h4>[Part 1] Walk Through on Implementation Details</h4>
     <p>
-
+      To generate ray from camera perspective, I need to transform the object coordinates to the world coordinates.
+      I implement the transform by first scaling the coordinates to the same size as in camera coordinates, then
+      translate (move) the center of the rectangle to its position in world coordinates.
+    </p>
+    <p>
+      First, I calculate two variables: <b>double tan_h = tan(radians(hFov) * 0.5)</b> and
+      <b>double tan_v = tan(radians(vFov) * 0.5)</b>.
+    </p>
+    <p>
+      Then the scale matrix is <b>{ 2 * tan_h, 0, 0, 0, 2 * tan_v, 0, 0, 0, 1 }</b>, and the translate matrix is
+      <b>{ 1, 0, -tan_h, 0, 1, -tan_v, 0, 0, 1 }</b>.
+    </p>
+    <p>Then I calculate the camera position as <b>translate * scale * Vector3D{x, y, 1}</b></p>.
+    <p>
+      Next, I get the direction of the ray as <b>Vector3D d = c2w * Vector3D{camera_pos[0], camera_pos[1], -1}</b>. Then
+      I normalize it by calling <b>d.normalize()</b> to make it ready to be used in the Ray constructor.
+    </p>
+    <p>
+      Lastly, I construct the ray by <b>Ray(pos, d)</b>, and set its <b>min_t</b> to <b>nClip</b> and its <b>max_t</b>
+      to <b>fClip</b>.
     </p>
 
     <h4>[Part 1] Explanation of the Triangle Intersection Algorithm</h4>
