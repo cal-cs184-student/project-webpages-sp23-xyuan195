@@ -92,6 +92,13 @@
       new shadow ray, I just return <b>L_out</b> directly. Otherwise, I continue the process with the new intersection
       value stored in <b>intersection</b> variable.
     </p>
+    <p>
+      Now, I need to use Russian Roulette algorithm to continue the recursion. Firstly, I created a new function
+      <b>PathTracer::get_continuation_probability</b>, which will be used to calculate the continuation probability (cpdf)
+      of the algorithm. It takes sampled <b>brdf</b> Vector3D variable, calculates the <b>norm2</b> value, and then
+      calculates the percentile by <b>(3 - norm) / 3</b>, then return <b>0.3 + percentage * (0.4 - 0.3)</b>. Basically,
+      this function will return a value between 0.3 and 0.4 proportional to the normal of the sampled brdf.
+    </p>
 
     <h4>[Part 4] Images Rendered with Global Illumination</h4>
     <h4>[Part 4] Comparison between Direct and Indirect Illumination</h4>
