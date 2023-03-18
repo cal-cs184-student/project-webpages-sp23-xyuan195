@@ -91,11 +91,29 @@
     <h3>Part 2: Bounding Volume Hierarchy</h3>
 
     <h4>[Part 2] Walk Through on BVH Construction Algorithm</h4>
-
     <p>
-
+      First, I iterate through all primitives in the scene. I keep track of the total number of primitives, the max and min
+      of each coordinates of the current BBox, and a new vector of Primitives which will be used in later sorting and
+      splitting.
     </p>
-
+    <p>
+      After the loop, I construct the BVHNode instance using the BBox instance.
+      if the total number of primitives is less than <b>max_leaf_size</b>, I set <b>node->start</b> to
+      the input start parameter, and <b>node->end</b> to the input end parameter. And just return the BVHNode instance.
+      This is the base case of the recursion.
+    </p>
+    <p>
+      If we have more primitives than max_leaf_size, I then calculate the delta of min and max values of all 3 coordinates.
+      Next, I compare the calculated 3 deltas, and choose the biggest one to use as the axis to sort the primitives, based
+      on their centroid values.
+    </p>
+    <p>
+      After the sorting, I recursively call <b>construct_bvh</b> for the first half and second half of the sorted primitives,
+      and assign the result of the first half to <b>node->l</b>, and the result of the second half to <b>node->r</b>.
+    </p>
+    <p>
+      Lastly, I free the allocated vector, and return node.
+    </p>
     <h4>[Part 2] Images with BVH Acceleration</h4>
     <div class="ui two column grid">
       <div class="row">
