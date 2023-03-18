@@ -86,7 +86,18 @@
       the accumulator of the radiance of all samples of this light. Then I create an inner loop to loop through the sample_size.
       In each of the inner iteration, I call <b>light->sample_L</b> to take a sample from the light to the hit point.
       This function will populate 3 variables: <b>wi</b>, <b>distToLight</b>, and <b>pdf</b>. Next, I calculate the
-      value of <b>wi</b> in object coordinates and store it in <b>wi_o</b>.
+      value of <b>wi</b> in object coordinates and store it in <b>wi_o</b>. Here I check the z coordinate of <b>wi_o</b>,
+      if it is less than 0, this means the light source is behind a surface. I just skip this sample and continue the loop.
+      Otherwise, I continue the processing. Next, I create a new ray using <b>hit_p</b> as the origin, and the <b>wi</b>
+      (in world coordinates) as the direction. And I set its <b>min_t</b> to <b>EPS_F</b>, and <b>max_t</b> to
+      <b>distToLight - EPS_F</b>. Then I check whether there is any intersection between this new ray and objects in the
+      scene by calling <b>bvh->intersect(ray_from_hit_p, &light_isect)</b>. If its result is false, I just skip this sample
+      and continue the loop. Otherwise, similar to uniform hemisphere sampling, I get the <b>brdf</b> of the light source
+      by calling <b>isect.bsdf->f(w_out, -wi_o)</b>, and get the cosine theta by calculating the dot product between the
+      intersection normal and <b>wi</b>. Then I accumulate <b>L_inter</b> by <b>(brdf * Li * cos) / pdf</b>. After I exit
+      the inner loop, I accumulate <b>L_out</b> by <b>L_inter / sample_size</b> (sample_size is the total number of samples
+      of this light source). Finally, after I exit the outer loop, I return <b>L_out / scene->lights.size()</b> to the
+      caller.
     </p>
 
     <h4>[Part 3] Images with Both Implementations of the Direct Lighting Function</h4>
