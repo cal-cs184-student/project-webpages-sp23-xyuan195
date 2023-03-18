@@ -67,8 +67,13 @@
       pdf to variable <b>pdf</b>. To do this, I first call <b>sampler.get_sample()</b> to get a sample, and then plug it
       in function <b>f</b> in Part 3 (along with the outgoing light direction <b>wo</b>) to get the bsdf, which is the
       return value. But before I return this value directly, I copy the sampled Vector3D to the input <b>wi</b> parameter,
-      and copy <b>1 / PI</b> to the input <b>pdf</b> parameter, so that they will be propagated to the caller. At last,
+      and copy the hardcoded <b>1 / PI</b> to the input <b>pdf</b> parameter, so that they will be propagated to the caller. At last,
       I return the calculated <b>bsdf</b> value.
+    </p>
+    <p>
+      Having <b>sample_f</b> function ready, I can start the implementation of <b>PathTracer::at_least_one_bounce_radiance</b>
+      function. First of all, I check the depth of the incoming ray object: if it is equal to 0, that means we've reached
+      the max ray depth, I just return <b>L_out</b> directly.
     </p>
 
     <h4>[Part 4] Images Rendered with Global Illumination</h4>
