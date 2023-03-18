@@ -99,6 +99,20 @@
       calculates the percentile by <b>(3 - norm) / 3</b>, then return <b>0.3 + percentage * (0.4 - 0.3)</b>. Basically,
       this function will return a value between 0.3 and 0.4 proportional to the normal of the sampled brdf.
     </p>
+    <p>
+      After I get the continuation probability (cpdf) from the above function, I plug it in <b>coin_flip</b> function
+      to randomly decide whether to continue the recursion or not. If the result of <b>coin_flip</b> is false, I just
+      skip the recursion call and return <b>L_out</b> directly. Otherwise, I continue the process.
+    </p>
+    <p>
+      As to continue the recursion, I firstly calculate the cosine theta by calculating the dot product of the intersection
+      normal and the incoming light direction in world coordinates <b>dot(isect.n, wi_w)</b>, then I update the depth
+      of the new shadow ray to <b>r.depth - 1</b> for next recursion call, so that we can terminate the calculation by
+      <b>max_ray_depth</b>. Then I recursively call <b>at_least_one_bounce_radiance</b> with the new shadow ray and the
+      new intersection, and plug in its result in formula <b>at_least_one_bounce_radiance(next_r, intersection) * brdf * cos / pdf / cpdf</b>.
+      Then I add the final result to <b>L_out</b>. This concludes the implementation of
+      <b>at_least_one_bounce_radiance</b> function.
+    </p>
 
     <h4>[Part 4] Images Rendered with Global Illumination</h4>
     <h4>[Part 4] Comparison between Direct and Indirect Illumination</h4>
