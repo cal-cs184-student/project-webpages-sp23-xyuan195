@@ -79,7 +79,18 @@
     </p>
     <p>
       Then, I take a sample using the outgoing light direction <b>w_out</b> by calling <b>sample_f</b> function we created.
-      This will give us a incoming light direction <b>wi</b> and its pdf <b>pdf</b>.
+      This will give us a incoming light direction <b>wi</b> and its pdf <b>pdf</b>. We will use this sampled incoming light
+      direction to construct the shadow ray (the ray from the current hit point to the sampled direction). To do this,
+      first I need to convert <b>wi</b> in the object coordinates to <b>wi_w</b> in the world coordinates by calling
+      <b>auto wi_w = o2w * wi</b>; then I need to normalize this <b>wi_w</b> Vector3D by calling <b>wi_w.normalize()</b>;
+      lastly, the new shadow ray will be <b>{ hit_p, wi_w }</b> (origin as hit_p, and direction as wi_w). I also need to
+      set the <b>min_t</b> of this new ray to <b>EPS_F</b>.
+    </p>
+    <p>
+      With this new shadow ray in hand, I check whether there's any intersection with it in the scene by calling
+      <b>bvh->intersect(next_r, &intersection)</b>. If the result is false, that means there's no intersection with this
+      new shadow ray, I just return <b>L_out</b> directly. Otherwise, I continue the process with the new intersection
+      value stored in <b>intersection</b> variable.
     </p>
 
     <h4>[Part 4] Images Rendered with Global Illumination</h4>
