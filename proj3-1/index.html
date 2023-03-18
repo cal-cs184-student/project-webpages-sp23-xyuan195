@@ -61,6 +61,16 @@
     <h3>Part 4: Global Illumination</h3>
 
     <h4>[Part 4] Walk Through on Implementation of the Indirect Lighting Function</h4>
+    <p>
+      To support indirect lighting function, I first implemented <b>DiffuseBSDF::sample_f</b> function to take a sample
+      by a given outgoing light direction, and store the sampled incoming light direction to variable <b>wi</b> and its
+      pdf to variable <b>pdf</b>. To do this, I first call <b>sampler.get_sample()</b> to get a sample, and then plug it
+      in function <b>f</b> in Part 3 (along with the outgoing light direction <b>wo</b>) to get the bsdf, which is the
+      return value. But before I return this value directly, I copy the sampled Vector3D to the input <b>wi</b> parameter,
+      and copy <b>1 / PI</b> to the input <b>pdf</b> parameter, so that they will be propagated to the caller. At last,
+      I return the calculated <b>bsdf</b> value.
+    </p>
+
     <h4>[Part 4] Images Rendered with Global Illumination</h4>
     <h4>[Part 4] Comparison between Direct and Indirect Illumination</h4>
     <h4>[Part 4] max_ray_depth Comparisons</h4>
