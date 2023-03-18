@@ -238,7 +238,30 @@
     <h3>Part 5: Adaptive Sampling</h3>
     <h4>[Part 5] Explanation and Walk Through on Adaptive Sampling</h4>
     <p>
-
+      Adaptive sampling is a technique that can adaptively terminate the sampling process if we have enough confidence
+      that the rendering of a given sample has converged.
+    </p>
+    <p>
+      As for implementation details, I start with a couple of variables to keep track of the state of the sampling loop.
+      <b>int i = 1</b>: integer i is the number of samples I've taken for the given pixel. It starts at 1 for easier
+      calculation for mod and division. Then I have 2 double variables <b>s1</b> and <b>s2</b> to keep track of the
+      accumulated sum and square sum of <b>Vector3D::illum</b>
+    </p>
+    <p>
+      Then I start the loop, the majority of the inner-loop processing is the same as the previous parts. The difference
+      is in each iteration, I calculate the illum of the result of <b>est_radiance_global_illumination</b>, and then add
+      it to s1, and add its square value to s2. And then I check condition <b>i % samplesPerBatch == 0</b>. If this
+      condition is true, then I determine whether the sampling has converged, and we can stop the iteration early. To do
+      that, I need to calculate the mean of the sampled results <b>double u = s1 / (double) i</b>, and the variance of
+      the sampled results <b>double variance = (s2 - s1 * s1 / (double) i) / (i - 1)</b>. Then I need to calculate the
+      value of variable <b>I</b> by <b>double I = 1.96 * (sqrt(variance) / sqrt((double) i))</b>. After this, I can then
+      compare <b>I</b> and <b>maxTolerance * u</b>: if <b>I <= maxTolerance * u</b> is true, this means the sampling of
+      this pixel has converged, and I can break the loop early. Otherwise, I just continue the loop util I reached the
+      max number of samples specified.
+    </p>
+    <p>
+      After I exit the loop, I need to modify the sample count to <b>i</b> (the actual number of samples I used in the
+      loop) in <b>sampleBuffer.update_pixel</b> and <b>sampleCountBuffer</b>.
     </p>
     <h4>[Part 5] Images</h4>
     <br><br>
