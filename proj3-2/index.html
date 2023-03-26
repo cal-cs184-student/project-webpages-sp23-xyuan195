@@ -78,9 +78,31 @@
 
     <h4>[Part 1] New multibounce effects in each image</h4>
     <p>
-
+      When max_ray_depth is 0, there is only light source in the rendered image.
     </p>
-
+    <p>
+      When max_ray_depth is 1, two spheres are rendered, but they are black. We can also see the reflection of the light
+      source on the surface of the two spheres. The shadows of the two spheres are large and black.
+    </p>
+    <p>
+      When max_ray_depth is 2, the ceiling is lighted up. And the mirror sphere can reflect the surrounding environment.
+      And the shadows of the two spheres are smaller and fainter. But the glass sphere has a lot of dark spots.
+    </p>
+    <p>
+      When max_ray_depth is 3, the most significant effect is that the glass sphere becomes "transparent". There is also
+      a bright area inside the shadow of the glass sphere. But the reflected image of the glass sphere in the mirror
+      sphere is dark.
+    </p>
+    <p>
+      When max_ray_depth is 4, the reflected image of the glass sphere in the mirror sphere becomes transparent. And
+      there is a bright area on the right (blue) wall.
+    </p>
+    <p>
+      When max_ray_depth is 5, the shadows of the two spheres are fainter.
+    </p>
+    <p>
+      When max_ray_depth is 100, the reflected light source on the surface of the glass sphere has more light areas.
+    </p>
 
     <h4>[Part 1] Bounce numbers related to particular effects</h4>
 
