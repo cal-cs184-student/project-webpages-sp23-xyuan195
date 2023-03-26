@@ -106,6 +106,33 @@
 
     <h4>[Part 1] Bounce numbers related to particular effects</h4>
 
+    <p>
+      The two spheres start to show up when max_ray_depth reaches 1. this is because they are not light source, we need
+      at least one bounce of light to render them.
+    </p>
+    <p>
+      The reflection effect of the surrounding non-light-source objects starts show up when max_ray_depth reaches 2.
+      This is because we need lights to bounce to the surface of the mirror sphere. So we need at least two bounces (one
+      bounce from light to the object, and one bounce from the object to the mirror sphere).
+    </p>
+    <p>
+      The glass sphere starts to show as "transparent" when max_ray_depth reaches 3. This is because this is the effect
+      of refraction: we need light to bounce back from inside the transparent object.
+    </p>
+    <p>
+      The light on the right (blue) wall starts to show up when max_ray_depth reaches 4. This is because the lights bounced
+      from inside glass sphere need one more bounce to reach to the wall.
+    </p>
+    <p>
+      When we keep increasing the value of max_ray_depth, the shadows of the two spheres become fainter and fainter. This
+      is because more lights get bounced into the shadow area.
+    </p>
+    <p>
+      Also, as we're increasing the value of max_ray_depth to a high value like 100, the area of the light source reflected
+      on the glass sphere becomes bigger because more and more lights get bounced from inside the glass material to the
+      surface.
+    </p>
+
     <h3>Part 2: Microfacet Material</h3>
 
     <h4>[Part 2] Sequence of images of CBdragon_microfacet_au.dae with different alpha values</h4>
