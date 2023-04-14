@@ -355,7 +355,19 @@
         </div>
       </div>
     </div>
+    <div class="ui message">
+      <div class="header">Comparison between Bump mapping and Displacement mapping</div>
+      <p>
+        Bump mapping doesn't modify the vertex position, it only modifies the vertex normal via a height map. On the other
+        hand, displacement mapping modifies the vertex position using the height map, and adjust normals accordingly.
+      </p>
+      <p>
+        The resulting render of bump mapping bumps out the object surface, and there's no "ditch" on the object's surface.
+        On the other hand, displacement mapping adds the artificial mutations directly on the object's surface.
+      </p>
+    </div>
     <br />
+
 
     <div class="ui two column grid">
       <div class="row">
@@ -382,10 +394,19 @@
         </div>
       </div>
     </div>
-
-    <p>
-
-    </p>
+    <div class="ui message">
+      <div class="header">Comparison on changing sphere mesh's coarseness</div>
+      <p>
+        We can see from above screenshots: sphere mesh's coarseness doesn't make much difference for bump mapping; but
+        for displacement mapping, the higher the sphere mesh's coarseness is, the pointier the edges will be on the
+        object's surface.
+      </p>
+      <p>
+        This is because for bump mapping, the extra details are added on top of object's surface. The underlying mesh
+        doesn't play any role in this process. But for displacement mapping, it needs to apply the height map directly
+        on the object's surface. As a result, it is much more sensitive to the sphere mesh's coarseness.
+      </p>
+    </div>
 
     <h4>[Part 5] Mirror shader screenshots</h4>
     <p>
