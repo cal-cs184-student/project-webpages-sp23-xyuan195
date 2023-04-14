@@ -81,7 +81,7 @@
 
     <h4>[Part 2] Parameter tuning</h4>
     <p>
-      "ks" is the spring constant. It defines how "strong" the strings are. Smaller ks will make the cloth look very soft,
+      "ks" is the spring constant. It defines how "stiff" the strings are. Smaller ks will make the cloth look very soft,
       while bigger ks will make the cloth look strong. Please see the comparison screenshots below.
     </p>
     <div class="ui two column grid">
@@ -97,6 +97,7 @@
       </div>
     </div>
 
+    <br />
     <p>
       "density" defines how dense the masses are. The bigger density value will make the masses "heavier".
       Please see the comparison screenshots below.
@@ -114,6 +115,7 @@
       </div>
     </div>
 
+    <br />
     <p>
       "damping" defines how easy to lose energy due to friction. The bigger damping value indicates it's hard to lose
       energy caused by friction, so the cloth will look smoother. Please see the comparison screenshots below.
@@ -199,7 +201,62 @@
       In this part, I implemented self-collisions using spatial hashing.
     </p>
 
+    <h4>[Part 4] Screenshots of cloth fall</h4>
+    <div class="ui column grid">
+      <div class="row">
+        <div class="column ui segment">
+          <img src="./assets/part4_beginning.png">
+          <h5 class="ui center aligned container">Beginning</h5>
+        </div>
+      </div>
+      <div class="row">
+        <div class="column ui segment">
+          <img src="./assets/part4_middle.png">
+          <h5 class="ui center aligned container">Fall in the middle</h5>
+        </div>
+      </div>
+      <div class="row">
+        <div class="column ui segment">
+          <img src="./assets/part4_end.png">
+          <h5 class="ui center aligned container">End</h5>
+        </div>
+      </div>
+    </div>
 
+    <h4>[Part 4] Parameters tuning</h4>
+    <p>
+      "density" defines how dense the masses are. The bigger density value will make the masses "heavier". So the cloth
+      is hard to fold. Please see the comparison screenshots below.
+    </p>
+    <div class="ui two column grid">
+      <div class="row">
+        <div class="column ui segment">
+          <img src="./assets/part4_density_3.png">
+          <h5 class="ui center aligned container">density = 3</h5>
+        </div>
+        <div class="column ui segment">
+          <img src="./assets/part4_density_9999.png">
+          <h5 class="ui center aligned container">density = 9999</h5>
+        </div>
+      </div>
+    </div>
+    <br />
+    <p>
+      "ks" defines how stiff the strings are. The smaller ks value will make the cloth
+      hard to fold. Please see the comparison screenshots below.
+    </p>
+    <div class="ui two column grid">
+      <div class="row">
+        <div class="column ui segment">
+          <img src="./assets/part4_ks_5.png">
+          <h5 class="ui center aligned container">ks = 5</h5>
+        </div>
+        <div class="column ui segment">
+          <img src="./assets/part4_ks_99999.png">
+          <h5 class="ui center aligned container">ks = 99999</h5>
+        </div>
+      </div>
+    </div>
 
     <h3>Part 5: Shaders</h3>
 
